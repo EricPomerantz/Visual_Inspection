@@ -1,8 +1,8 @@
 # visual_inspection/assistant/handler.py
 
-from .summarizer import summarize_crops
-from .stats import count_classes
-from ..detection.detector import load_latest_json
+from assistant.summarizer import summarize_crops
+from assistant.stats import count_classes
+from detection.detector import load_latest_json
 
 import re
 
