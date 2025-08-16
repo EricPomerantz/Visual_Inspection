@@ -1,43 +1,71 @@
 import streamlit as st
+from ultralytics import YOLO
 from PIL import Image
 import os
-from ultralytics import YOLO
-import tempfile
+import cv2
+import numpy as np
 
-# Load the model once
-model = YOLO("yolov8n.pt")  # Replace with your custom model if needed
+# Load the YOLO model
+model = YOLO("yolov8n.pt")
 
-st.title("Visual Inspection with YOLO")
+# Set up the Streamlit UI
+st.title("Visual Inspection - YOLO Detection")
+st.write("Upload images for detection, filter by class and confidence, and save cropped objects.")
 
-uploaded_files = st.file_uploader("Upload one or more images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
+# Sidebar settings
+confidence_threshold = st.sidebar.slider("Confidence Threshold", 0.0, 1.0, 0.5, 0.01)
+class_filter_input = st.sidebar.text_input("Filter by class (comma-separated, e.g. person,car)", "")
+
+# Handle class filters
+if class_filter_input:
+    class_filters = [cls.strip().lower() for cls in class_filter_input.split(",")]
+else:
+    class_filters = []
+
+# Upload multiple images
+uploaded_files = st.file_uploader("Upload Images", type=["jpg", "png", "jpeg"], accept_multiple_files=True)
+
+# Ensure crops directory exists
+os.makedirs("crops", exist_ok=True)
+
+# Class names from COCO dataset
+class_names = model.model.names
 
 if uploaded_files:
-    save_dir = "uploaded_images"
-    os.makedirs(save_dir, exist_ok=True)
-
     for uploaded_file in uploaded_files:
-        # Save the image temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp_file:
-            tmp_file.write(uploaded_file.read())
-            temp_path = tmp_file.name
+        st.subheader(f"Processing {uploaded_file.name}")
+        image = Image.open(uploaded_file).convert("RGB")
+        image_np = np.array(image)
 
-        # Run detection
-        results = model(temp_path)
+        # Run YOLO inference
+        results = model(image_np)[0]
 
-        # Save annotated result
-        annotated_image_path = temp_path.replace(".jpg", "_annotated.jpg")
-        for r in results:
-            r.save(filename=annotated_image_path)
+        # Draw detections
+        boxes = results.boxes
+        annotated_img = image_np.copy()
 
-        # Display original and annotated image
-        col1, col2 = st.columns(2)
-        with col1:
-            st.image(Image.open(temp_path), caption="Original", use_column_width=True)
-        with col2:
-            st.image(Image.open(annotated_image_path), caption="YOLO Detection", use_column_width=True)
+        for i, box in enumerate(boxes):
+            cls_id = int(box.cls[0].item())
+            conf = float(box.conf[0].item())
+            label = class_names[cls_id]
 
-        # Save permanently if desired
-        final_path = os.path.join(save_dir, uploaded_file.name)
-        with open(final_path, "wb") as f:
-            f.write(open(temp_path, "rb").read())
+            # Check confidence and class filter
+            if conf < confidence_threshold:
+                continue
+            if class_filters and label.lower() not in class_filters:
+                continue
 
+            x1, y1, x2, y2 = map(int, box.xyxy[0])
+            cv2.rectangle(annotated_img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(annotated_img, f"{label} {conf:.2f}", (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+            # Crop ROI and save
+            crop = image_np[y1:y2, x1:x2]
+            crop_filename = f"crops/{uploaded_file.name.split('.')[0]}_crop_{i}_{label}.jpg"
+            cv2.imwrite(crop_filename, cv2.cvtColor(crop, cv2.COLOR_RGB2BGR))
+
+        # Show annotated image
+        st.image(annotated_img, caption="Detections", use_column_width=True)
+
+        st.success(f"Processed {uploaded_file.name}. Crops saved to `crops/`.")
