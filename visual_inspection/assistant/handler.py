@@ -1,8 +1,9 @@
 # visual_inspection/assistant/handler.py
 
-from visual_inspection.assistant.summarizer import summarize_crops
-from visual_inspection.assistant.stats import count_classes
-from visual_inspection.detection.detector import load_latest_json
+from .summarizer import summarize_crops
+from .stats import count_classes
+from ..detection.detector import load_latest_json
+
 import re
 
 def extract_parameters(query):
