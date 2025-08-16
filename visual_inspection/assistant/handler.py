@@ -1,8 +1,8 @@
 # visual_inspection/assistant/handler.py
 
-from assistant.summarizer import summarize_crops
-from assistant.stats import count_classes
-from detection.detector import load_latest_json
+from visual_inspection.assistant.summarizer import summarize_crops
+from visual_inspection.assistant.stats import count_classes
+from visual_inspection.detection.detector import load_latest_json
 import re
 
 def extract_parameters(query):
@@ -50,3 +50,4 @@ def handle_query(query):
                 "'summarize events', or 'report statistics'."
             )
         }
+
