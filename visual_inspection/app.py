@@ -8,7 +8,7 @@ import zipfile
 import io
 
 # 👇 Agentic AI Imports
-from assistant.handler import handle_query
+from visual_inspection.assistant.handler import handle_query
 
 # Load YOLO model
 model = YOLO("yolov8n.pt")
