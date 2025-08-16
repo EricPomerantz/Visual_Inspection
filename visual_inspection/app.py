@@ -7,6 +7,9 @@ import numpy as np
 import zipfile
 import io
 
+# 👇 Agentic AI Imports
+from assistant.handler import handle_query
+
 # Load YOLO model
 model = YOLO("yolov8n.pt")
 class_names = model.model.names
@@ -87,3 +90,12 @@ if uploaded_files:
         st.download_button("Download All Crops as ZIP", zip_buffer, file_name="crops.zip", mime="application/zip")
     else:
         st.warning("No valid detections found for the current filters.")
+
+# 🧠 Agentic AI Assistant Section
+st.subheader("🧠 Agentic Assistant")
+query = st.text_input("Ask something like: 'fetch latest detections', 'summarize events', or 'report statistics'")
+
+if query:
+    response = handle_query(query)
+    st.write("### Assistant Response")
+    st.json(response)
