@@ -2,29 +2,24 @@ import streamlit as st
 from PIL import Image
 import os
 
-# App title
-st.title("Visual Inspection Assistant")
+st.title("Visual Inspection")
 
-# Sidebar for navigation
-st.sidebar.title("Navigation")
-app_mode = st.sidebar.selectbox("Choose a section", ["Upload & View Image"])
+# Allow user to upload multiple photos
+uploaded_files = st.file_uploader("Upload one or more images", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-# Main app functionality
-if app_mode == "Upload & View Image":
-    st.header("Upload an Image for Inspection")
-    
-    uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-    
-    if uploaded_file is not None:
-        # Display image
+if uploaded_files:
+    save_dir = "uploaded_images"
+    os.makedirs(save_dir, exist_ok=True)
+
+    for uploaded_file in uploaded_files:
+        # Open and display each image
         image = Image.open(uploaded_file)
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+        st.image(image, caption=uploaded_file.name, use_column_width=True)
 
-        # Optionally save the image to a folder
-        save_path = os.path.join("uploads", uploaded_file.name)
-        os.makedirs("uploads", exist_ok=True)
+        # Save each image
+        save_path = os.path.join(save_dir, uploaded_file.name)
         with open(save_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
         
-        st.success(f"Image saved to {save_path}")
+        st.success(f"Saved to {save_path}")
 
