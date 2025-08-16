@@ -30,3 +30,13 @@ OR
 
 Visit https://visualinspection-3ub59bwul2s47adbw6pk8z.streamlit.app/ to test live.
 
+<div>
+    <a href="https://www.loom.com/share/5eadd182990644ecbff15af7823dcd51">
+      <p>EricPomerantz/Visual_Inspection - Watch Video</p>
+    </a>
+    <a href="https://www.loom.com/share/5eadd182990644ecbff15af7823dcd51">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/5eadd182990644ecbff15af7823dcd51-50b8866a4d8340f5-full-play.gif">
+    </a>
+  </div>
+  
+
