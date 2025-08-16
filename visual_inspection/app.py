@@ -72,7 +72,7 @@ if uploaded_files:
                 all_crop_paths.append(crop_filename)
 
             st.subheader(f"Detections in {uploaded_file.name}")
-            st.image(annotated_img, caption="Annotated Image", use_column_width=True)
+            st.image(annotated_img, caption="Annotated Image", use_container_width=True)
 
     # Show download button if crops exist
     if all_crop_paths:
