@@ -4,7 +4,7 @@ This project is a visual inspection tool that combines YOLO object detection wit
 
 ## Features
 
-### YOLOv8 Object Detection
+### YOLO Object Detection
 - Upload one or multiple images (`.jpg`, `.jpeg`, `.png`)
 - Filter results by:
   - Confidence threshold
