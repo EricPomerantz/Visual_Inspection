@@ -2,10 +2,14 @@ import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import os
+import sys
 import cv2
 import numpy as np
 import zipfile
 import io
+
+# 🔧 Ensure current dir is in sys.path
+sys.path.append(os.path.dirname(__file__))
 
 # 👇 Agentic AI Imports
 from assistant.handler import handle_query
